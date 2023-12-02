@@ -4,18 +4,20 @@
 char *mut_str(const char *str, int size)
 {
 	int i;
-	char *ch_arr = (char *)malloc(sizeof(char) * (size + 1));
-	char *res = ch_arr;
+	char *buf = (char *)malloc(sizeof(char) * (size + 1));
+	char *res = buf;
 	
-	if(ch_arr) {
-		for(i = 0; i < size; i++) {
-			*ch_arr = *str;
-			str++;
-			ch_arr++;
-		}
-		ch_arr[size] = '\0';
+	if(!buf) {
+		return NULL;
 	}
-	
+
+	for(i = 0; i < size; i++) {
+		*buf = *str;
+		str++;
+		buf++;
+	}
+	buf[size] = '\0';
+
 	return res;
 }
 

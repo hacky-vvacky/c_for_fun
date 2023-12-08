@@ -1,63 +1,82 @@
 #include <stdlib.h>
 #include "string.h"
 
-char *mut_str(const char *str, int size)
-{
-	int i;
-	char *buf = (char *)malloc(sizeof(char) * (size + 1));
-	char *res = buf;
-	
-	if(!buf) {
-		return NULL;
-	}
-
-	for(i = 0; i < size; i++) {
-		*buf = *str;
-		str++;
-		buf++;
-	}
-	buf[size] = '\0';
-
-	return res;
-}
-
 int str_len(const char *str)
 {
 	int len = 0;
+	const char *p = str;
 
-	if(!(*str) || (*str) == '\0') {
+	if(p == NULL || p[0] == '\0')
 		return len;
-	}
 
-	for(; *str; str++, len++);
+	for(len = 0; *p; len++, p++);
+
 	return len;
 }
 
-const char *substr(const char *str, int offset, int len)
+int mut_str(const char *str, char *dst, int size)
+{
+	int res, i;
+	
+	if(!str || !dst) {
+		res = -1;
+		goto exit;
+	}
+
+	for(i = 0; i < size; i++, str++)
+		dst[i] = *str;
+
+	dst[size] = '\0';
+	res = 0;
+exit:
+	return res;
+}
+
+int substr(const char *str, char *dst, int offset, int len)
 {	
-	int i;
-	int strlen = str_len(str);
+	int res, i;
+	int org_str_len = str_len(str);
 	const char *p = str;
-	char *res = (char *) malloc(sizeof(char) * (len + 1));
 
-	if(str == NULL || !res) {
-		return NULL;
+	if(!str || !dst) {
+		res = -1;
+		goto exit;
 	}
 
-	if(offset >= strlen || len <= 0 || str[0] == '\0') {
-		char *empty = (char *) malloc(sizeof(char));
-		empty[0] = '\0';
-		return empty;
+	if(offset >= org_str_len || len <= 0 || str[0] == '\0') {
+		res = -2;
+		goto exit;
 	}
 
-	if(len > (strlen - offset)) {
-		len = strlen - offset;
-	}
+	if(len > (org_str_len - offset))
+		len = org_str_len - offset;
 
-	for(i = 0, p += offset; i < len; i++, p++) {
-		res[i] = *p;
+	for(i = 0, p += offset; i < len; i++, p++)
+		dst[i] = *p;
+	
+	dst[i] = '\0';
+	res = 0;
+exit:
+	return res;
+}
+
+int str_cmp(const char *str1, const char *str2)
+{
+	int res = 0;
+	int equal = 1;
+	const char *p1 = str1;
+	const char *p2 = str2;
+
+	while(equal) {
+		if((*p1) == (*p2)) {
+			p1++;
+			p2++;
+			continue;
+		} else {
+			res = *p1 - *p2;
+			equal = 0;
+		}
 	}
-	res[i] = '\0';
 
 	return res;
 }

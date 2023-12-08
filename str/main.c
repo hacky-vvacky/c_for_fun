@@ -4,20 +4,46 @@
 
 int main()
 {
-	const char *str = "hello";
-	const char *sub;
-	int i, len = str_len(str);
-	char *mutable_str = mut_str(str, len);
-	char *tmp = mutable_str;
-		
-	printf("Mutable string from string %s with size %d: %s\n", str, len, mutable_str);
-	printf("Let's prove it's mutable. Let's fully rewrite our mutable string.\n");
-	for(i = 0; i < len; i++) {
-		*tmp++ = 'a';
+	int cmp_res;
+	const char *str = "Hello, World!";
+	const char *cmp1 = "Nikita Bulavin";
+	const char *cmp2 = "Nikita Belyaev";
+	char *mutable = malloc(sizeof(mutable) * (str_len(str) + 1));
+	char *substring = malloc(sizeof(substring) * (str_len(str) + 1));
+
+	printf("Original string is \"%s\"\n", str);
+
+	/*
+	 * String mutation example
+	 */
+	printf("\tSTRING MUTATION\n");
+
+	printf("Let's create mutable copy of original string and change the last sign to '?'\n");
+	mut_str(str, mutable, str_len(str));
+	mutable[str_len(mutable) - 1] = '?';
+	printf("Mutated string now is \"%s\"\n", mutable);
+
+	/*
+	 * Substring example
+	 */
+	printf("\tSUBSTRING\n");
+	printf("Let's get substring \"World!\" from original string\n");
+	substr(str, substring, 7, 6);
+	printf("Substring now is \"%s\"\n", substring);
+
+	/*
+	 * String comparsion example
+	 */
+	printf("\tSTRING COMPARSION\n");
+	printf("Let's compare two string: \"%s\" and \"%s\"\n", cmp1, cmp2);
+	cmp_res = str_cmp(cmp1, cmp2);
+	if(cmp_res == 0) {
+		printf("Strings are equal\n");
+	} else if(cmp_res > 0) {
+		printf("String \"%s\" bigger than string \"%s\"\n", cmp1, cmp2);
+	} else {
+		printf("String \"%s\" bigger than string \"%s\"\n", cmp2, cmp1);
 	}
-	printf("String has been mutated and now is %s.\n", mutable_str);
-	sub = substr(str, 0, 4);
-	printf("Substring of 'hello': %s\n", sub);
 
 	return 0;
 }

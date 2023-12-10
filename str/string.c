@@ -1,20 +1,24 @@
 #include <stdlib.h>
 #include "string.h"
 
+const int CHPOS_NO = 0;
+const int CHPOS_RO = 1;
+
 int str_len(const char *str)
 {
-	int len = 0;
-	const char *p = str;
+	int res;
 
-	if(p == NULL || p[0] == '\0')
-		return len;
+	if(str == NULL || *str == '\0') {
+		res = 0;
+		goto exit;
+	}
 
-	for(len = 0; *p; len++, p++);
-
-	return len;
+	for(res = 0; *str; res++, str++);
+exit:
+	return res;
 }
 
-int mut_str(const char *str, char *dst, int size)
+int str_copy(const char *str, char *dst, int size)
 {
 	int res, i;
 	
@@ -36,9 +40,8 @@ int substr(const char *str, char *dst, int offset, int len)
 {	
 	int res, i;
 	int org_str_len = str_len(str);
-	const char *p = str;
 
-	if(!str || !dst) {
+	if(!str || org_str_len <= 1  || !dst) {
 		res = -1;
 		goto exit;
 	}
@@ -51,8 +54,8 @@ int substr(const char *str, char *dst, int offset, int len)
 	if(len > (org_str_len - offset))
 		len = org_str_len - offset;
 
-	for(i = 0, p += offset; i < len; i++, p++)
-		dst[i] = *p;
+	for(i = 0, str += offset; i < len; i++, str++)
+		dst[i] = *str;
 	
 	dst[i] = '\0';
 	res = 0;
@@ -62,21 +65,82 @@ exit:
 
 int str_cmp(const char *str1, const char *str2)
 {
-	int res = 0;
-	int equal = 1;
-	const char *p1 = str1;
-	const char *p2 = str2;
+	int cnt, res;
+	int len1 = str_len(str1);
+	int len2 = str_len(str2);
 
-	while(equal) {
-		if((*p1) == (*p2)) {
-			p1++;
-			p2++;
-			continue;
-		} else {
-			res = *p1 - *p2;
-			equal = 0;
+	for(cnt = 0;; str1++, str2++, cnt++) {
+		if((*str1) != (*str2)) {
+			res = *str1 - *str2;
+			goto exit;
+		}
+		
+		if(cnt == len1 && cnt == len2) {
+			res = 0;
+			goto exit;
+		} else if(cnt == len1 && cnt != len2) {
+			res = -1;
+			goto exit;
+		} else if(cnt != len1 && cnt == len2) {
+			res = 1;
+			goto exit;
 		}
 	}
-
+exit:
 	return res;
+}
+
+int str_rev(const char *str, char *dst)
+{
+	int i, res;
+	int len = str_len(str);
+
+	if(!str || len <= 1 || !dst) {
+		res = -1;
+		goto exit;
+	}
+
+	for(i = 0, str += len - 1; i < len; i++, str--) {
+		dst[i] = *str;
+	}
+	dst[len] = '\0';
+	res = 0;
+exit:
+	return res;
+}
+
+int str_chpos(const char *str, char c, int search_order)
+{
+	int i, res;
+	
+	if(!str) {
+		res = -1;
+		goto exit;
+	}
+
+	if (search_order == CHPOS_NO) {
+        	for (i = 0; i < str_len(str); i++) {
+            		if (str[i] == c) {
+                		res = i + 1;
+                		goto exit;
+            		}
+        	}
+    	} else if (search_order == CHPOS_RO) {
+        	for (i = str_len(str) - 1; i >= 0; i--) {
+            		if (str[i] == c) {
+                		res = str_len(str) - i;
+                		goto exit;
+            		}
+        	}
+    	}
+exit:
+	return res;
+}
+
+char str_getch(const char *str, unsigned int pos)
+{
+	if(pos > str_len(str) || pos == 0) {
+		return -1;
+	}
+	return str[pos - 1];
 }

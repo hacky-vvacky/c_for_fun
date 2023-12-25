@@ -1,8 +1,4 @@
-#include <stdlib.h>
 #include "string.h"
-
-const int CHPOS_NO = 0;
-const int CHPOS_RO = 1;
 
 int str_len(const char *str)
 {
@@ -109,7 +105,7 @@ exit:
 	return res;
 }
 
-int str_chpos(const char *str, char c, int search_order)
+int str_chpos(const char *str, char c, CHPOS_SEARCH_ORDER srch_ord)
 {
 	int i, res;
 	
@@ -118,14 +114,14 @@ int str_chpos(const char *str, char c, int search_order)
 		goto exit;
 	}
 
-	if (search_order == CHPOS_NO) {
+	if (srch_ord == CHPOS_NO) {
         	for (i = 0; i < str_len(str); i++) {
             		if (str[i] == c) {
                 		res = i + 1;
                 		goto exit;
             		}
         	}
-    	} else if (search_order == CHPOS_RO) {
+    	} else if (srch_ord == CHPOS_RO) {
         	for (i = str_len(str) - 1; i >= 0; i--) {
             		if (str[i] == c) {
                 		res = str_len(str) - i;
@@ -137,9 +133,9 @@ exit:
 	return res;
 }
 
-char str_getch(const char *str, unsigned int pos)
+char str_getch(const char *str, int pos)
 {
-	if(pos > str_len(str) || pos == 0) {
+	if(pos > str_len(str) || pos <= 0) {
 		return -1;
 	}
 	return str[pos - 1];

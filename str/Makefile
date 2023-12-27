@@ -1,4 +1,4 @@
-DEPS = string.c
+DEPS = str.c
 CFLAGS = -g -Wall -Wextra -ansi -pedantic
 
 bin/examples: examples.c $(DEPS)
